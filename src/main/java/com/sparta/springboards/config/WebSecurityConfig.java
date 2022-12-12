@@ -51,8 +51,6 @@ public class WebSecurityConfig {
 
         //permitAll() 를 사용해서, 이런 URL 들을 인증하지 않고 실행 할 수 있게 함
         http.authorizeRequests().antMatchers("/api/auth/**").permitAll()
-//                .antMatchers("/api/search").permitAll()
-//                .antMatchers("/api/shop").permitAll()
                 //그 이외의 URL 요청들을 전부 다 authentication(인증 처리)하겠다
                 .anyRequest().authenticated()
                 // JWT 인증/인가를 사용하기 위한 설정
@@ -60,10 +58,6 @@ public class WebSecurityConfig {
                 //addFilterBefore: 어떤 Filter 이전에 추가하겠다 --> 우리가 만든 JwtAuthFilter 를 UsernamePasswordAuthenticationFilter 이전에 실행할 수 있도록
                 //1. JwtAuthFilter 를 통해 인증 객체를 만들고 --> 2. context 에 추가 --> 3.인증 완료 --> UsernamePasswordAuthenticationFilter 수행 --> 인증됐으므로 다음 Filter 로 이동 --> Controller 까지도 이동
                 .and().addFilterBefore(new JwtAuthFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);
-
-//        // Custom 로그인 페이지 사용
-//        // Security 에서 제공하는 default Form Login 을 사용하겠다
-//        http.formLogin().loginPage("/api/user/login-page").permitAll();
 
         //"거부"가 났을 때, 403 Forbidden 페이지(접근 제한 페이지) 이동 설정
         http.exceptionHandling().accessDeniedPage("/api/user/forbidden");

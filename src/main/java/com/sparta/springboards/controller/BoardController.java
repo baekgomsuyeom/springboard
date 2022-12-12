@@ -29,7 +29,6 @@ public class BoardController {
     private final BoardService boardService;    //boardService 를 가져다 쓰겠다 (의존성 주입)
 
     //게시글 작성
-//    @Secured({"ROLE_ADMIN","ROLE_USER"})
     @PostMapping("/post")
     //BoardResponseDto 반환 타입, createBoard 메소드 명
     //@RequestBody: HTTP Method 안의 body 값을 Mapping(key:value 로 짝지어줌), BoardRequestDto: 넘어오는 데이터를 받아주는 객체
@@ -40,7 +39,6 @@ public class BoardController {
         return boardService.createBoard(requestDto, userDetails.getUser());
     }
 
-//    @Secured({"ROLE_ADMIN","ROLE_USER"})
     //전체 게시글 목록 조회
     @GetMapping("/posts")
     //BoardResponseDto 를 List 로 반환하는 타입, getListBoards 메소드 명, () 전부 Client 에게로 반환하므로 비워둠
@@ -49,7 +47,6 @@ public class BoardController {
         return boardService.getListBoards();
     }
 
-//    @Secured({"ROLE_ADMIN","ROLE_USER"})
     //선택한 게시글 조회
     @GetMapping("/post/{id}")
     //BoardResponseDto 반환 타입, getBoards 메소드 명
@@ -59,7 +56,6 @@ public class BoardController {
         return boardService.getBoard(id);
     }
 
-//    @Secured({"ROLE_ADMIN","ROLE_USER"})
     //선택한 게시글 수정(변경)
     @PutMapping("/post/{id}")
     //BoardResponseDto 반환 타입, updateBoard 메소드 명
@@ -72,7 +68,6 @@ public class BoardController {
         return boardService.updateBoard(id, requestDto, userDetails.getUser());
     }
 
-//    @Secured({"ROLE_ADMIN","ROLE_USER"})
     //선택한 게시글 삭제
     @DeleteMapping("/post/{id}")
     //MsgResponseDto 반환 타입, deleteBoard 메소드 명

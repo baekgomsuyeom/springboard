@@ -6,6 +6,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 //@Getter, @Setter: 필드에 선언시 자동으로 get, set 메소드 생성. 클래스에서 선언시 모든 필드에 접근자와 설정자가 자동으로 생성
 @Getter
@@ -24,8 +26,12 @@ public class Board extends Timestamped {
     //@GeneratedValue(strategy = GenerationType.IDENTITY) 또는 SEQUENCE) 또는 TABLE) 또는 AUTO)
     //각각의 기능: 기본 키 생성을 DB에 위임 (Mysql), DB 시퀀스를 사용해서 기본 키 할당 (ORACLE), 키 생성 테이블 사용 (모든 DB 사용 가능), 선택된 DB에 따라 자동으로 전략 선택
     //AUTO: DB에 따라 전략을 JPA 가 자동으로 선택되므로, DB를 변경해도 코드를 수정할 필요 없다는 장점
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @OneToMany(mappedBy = "board", cascade = CascadeType.REMOVE)
+    @OrderBy("createdAt DESC")
+    private List<Comment> comments = new ArrayList<>();
 
     //객체 필드를 테이블 컬럼과 매핑 + 여러 속성 설정 가능
     //nullable: null 허용 여부
@@ -39,7 +45,7 @@ public class Board extends Timestamped {
     private String contents;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
 

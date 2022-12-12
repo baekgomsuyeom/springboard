@@ -2,12 +2,12 @@ package com.sparta.springboards.service;
 
 import com.sparta.springboards.dto.BoardRequestDto;
 import com.sparta.springboards.dto.BoardResponseDto;
+import com.sparta.springboards.dto.CommentResponseDto;
 import com.sparta.springboards.entity.Board;
+import com.sparta.springboards.entity.Comment;
 import com.sparta.springboards.entity.User;
 import com.sparta.springboards.entity.UserRoleEnum;
-import com.sparta.springboards.jwt.JwtUtil;
 import com.sparta.springboards.repository.BoardRepository;
-import com.sparta.springboards.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,8 +24,8 @@ public class BoardService {
 
     //의존성 주입
     private final BoardRepository boardRepository;
-    private final UserRepository userRepository;
-    private final JwtUtil jwtUtil;
+    //private final UserRepository userRepository;
+    //private final JwtUtil jwtUtil;
 
     //게시글 작성
     //클래스나 메서드에 붙여줄 경우, 해당 범위 내 메서드가 트랜잭션(데이터베이스 관리 시스템 또는 유사한 시스템에서 상호작용의 단위(더 이상 쪼개질 수 없는 최소의 연산))이 되도록 보장
@@ -55,8 +55,14 @@ public class BoardService {
 
         //반복문을 이용하여, boardList 에 담긴 데이터들을 객체 Board 로 모두 옮긴다
         for (Board board : boardList) {
+
+            List<CommentResponseDto> commentList = new ArrayList<>();
+            for (Comment comment : board.getComments()) {
+                commentList.add(new CommentResponseDto(comment));
+            }
+
             //board 를 새롭게 BoardResponseDto 로 옮겨담고, BoardResponseDto 를 boardResponseDto 안에 추가(add)한다
-            boardResponseDto.add(new BoardResponseDto(board));
+            boardResponseDto.add(new BoardResponseDto(board, commentList));
         }
         //최종적으로 옮겨담아진 boardResponseDto 를 반환
         return boardResponseDto;
@@ -79,7 +85,7 @@ public class BoardService {
     @Transactional
     //BoardResponseDto 반환 타입, updateBoard 메소드 명
     //Long id: 담을 데이터, BoardRequestDto: 넘어오는 데이터를 받아주는 객체, HttpServletRequest request 객체: 누가 로그인 했는지 알기위한 토큰을 담고 있음
-    public BoardResponseDto  updateBoard(Long id, BoardRequestDto requestDto, User user) {    //HttpServletRequest request?
+    public BoardResponseDto updateBoard(Long id, BoardRequestDto requestDto, User user) {    //HttpServletRequest request?
 
         Board board;    //board 를 사용하기위해서는 이런 변수 선언 필요함
 
