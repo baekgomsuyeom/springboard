@@ -4,8 +4,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
 
 //@Getter, @Setter: 필드에 선언시 자동으로 get, set 메소드 생성. 클래스에서 선언시 모든 필드에 접근자와 설정자가 자동으로 생성
 @Getter
@@ -35,15 +33,9 @@ public class User {
     //nullable: null 허용 여부
     //unique: 중복 허용 여부 (false 일때 중복 허용)
     @Column(nullable = false, unique = true)
-    //문자열, 배열등의 크기 설정
-    @Size(min = 4,max = 10,message ="아이디는 4에서 10자 사이 입니다.")
-    //정규식 설정
-    @Pattern(regexp = "[a-z0-9]*$",message = "아이디 형식이 일치하지 않습니다.")
     private String username;
 
     @Column(nullable = false)
-    @Size(min = 8,max = 15,message ="비밀번호는 8에서 15자 사이 입니다.")
-    @Pattern(regexp = "[a-zA-Z0-9`~!@#$%^&*()_=+|{};:,.<>/?]*$",message = "비밀번호 형식이 일치하지 않습니다.")
     private String password;
 
     @Column(nullable = false)
