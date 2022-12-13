@@ -93,7 +93,7 @@ public class BoardService {
         if(user.getRole().equals(UserRoleEnum.ADMIN)) {
             board = boardRepository.findById(id).orElseThrow(
                     () -> new IllegalArgumentException("게시글이 존재하지 않습니다.")
-                    //() -> new RequestException(ErrorCode.게시글이_존재하지_않습니다_400)
+                    //() -> new RequestException(ErrorCoded .게시글이_존재하지_않습니다_400)
             );
 
         } else {

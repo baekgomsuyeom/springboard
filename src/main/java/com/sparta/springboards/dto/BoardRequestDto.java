@@ -14,7 +14,6 @@ import lombok.Setter;
 @AllArgsConstructor
 
 public class BoardRequestDto {
-
     //필드    --> 사용자(Client)가 직접 입력하는 부분
     private String title;
     private String contents;
