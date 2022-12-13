@@ -3,10 +3,8 @@ package com.sparta.springboards.service;
 import com.sparta.springboards.dto.BoardRequestDto;
 import com.sparta.springboards.dto.BoardResponseDto;
 import com.sparta.springboards.dto.CommentResponseDto;
-import com.sparta.springboards.entity.Board;
-import com.sparta.springboards.entity.Comment;
-import com.sparta.springboards.entity.User;
-import com.sparta.springboards.entity.UserRoleEnum;
+import com.sparta.springboards.entity.*;
+import com.sparta.springboards.repository.BoardLikeRepository;
 import com.sparta.springboards.repository.BoardRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -14,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 
@@ -24,6 +23,7 @@ public class BoardService {
 
     //의존성 주입
     private final BoardRepository boardRepository;
+    private final BoardLikeRepository boardLikeRepository;
     //private final UserRepository userRepository;
     //private final JwtUtil jwtUtil;
 
@@ -47,7 +47,7 @@ public class BoardService {
     //(readOnly = true): JPA 를 사용할 경우, 변경감지 작업을 수행하지 않아 성능상의 이점
     @Transactional(readOnly = true)
     //BoardResponseDto 를 List 로 반환하는 타입, getListBoards 메소드 명, () 전부 Client 에게로 반환하므로 비워둠
-    public List<BoardResponseDto> getListBoards() {
+    public List<BoardResponseDto> getListBoards(User user) {
         //boardRepository 와 연결해서, 모든 데이터들을 내림차순으로, List 타입으로 객체 Board 에 저장된 데이터들을 boardList 안에 담는다
         List<Board> boardList =  boardRepository.findAllByOrderByModifiedAtDesc();      //주의. boards 와 board
         //boardResponseDto 를 새롭게 만든다 --> 텅 빈 상태 (빈 주머니 상태?)
@@ -62,7 +62,11 @@ public class BoardService {
             }
 
             //board 를 새롭게 BoardResponseDto 로 옮겨담고, BoardResponseDto 를 boardResponseDto 안에 추가(add)한다
-            boardResponseDto.add(new BoardResponseDto(board, commentList));
+            boardResponseDto.add(new BoardResponseDto(
+                    board,
+                    commentList,
+                    // 해당 회원의 해당 게시글 좋아요 여부
+                    (checkBoardLike(board.getId(), user))));
         }
         //최종적으로 옮겨담아진 boardResponseDto 를 반환
         return boardResponseDto;
@@ -134,5 +138,11 @@ public class BoardService {
         boardRepository.delete(board);
 
 
+    }
+
+    @Transactional(readOnly = true)
+    public boolean checkBoardLike(Long boardId, User user) {
+        Optional<BoardLike> boardLike = boardLikeRepository.findByBoardIdAndUserId(boardId, user.getId());
+        return boardLike.isPresent();
     }
 }

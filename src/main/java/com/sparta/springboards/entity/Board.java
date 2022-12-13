@@ -44,6 +44,9 @@ public class Board extends Timestamped {
     @Column(nullable = false)
     private String contents;
 
+    @Column(nullable = false)
+    private int likeCount;
+
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
@@ -63,5 +66,9 @@ public class Board extends Timestamped {
         this.title = boardrequestDto.getTitle();             //this.title: (위에서 선언된) 필드, BoardRequestDto 객체의 requestDto 매개변수로 들어온 데이터를 getTitle() 에 담는다(DB 로 보내기 위해)
         this.contents = boardrequestDto.getContents();
 
+    }
+
+    public void updateLikeCount(int i) {
+        this.likeCount += i;
     }
 }
