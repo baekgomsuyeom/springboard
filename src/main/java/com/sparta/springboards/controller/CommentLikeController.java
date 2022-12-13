@@ -14,11 +14,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/user")
+@RequestMapping("/api/like")
 public class CommentLikeController {
     private final CommentLikeService commentLikeService;
 
-    @PostMapping("/commentlike/{commentId}")
+    @PostMapping("/comment/{commentId}")
     public MsgResponseDto commentLike(@AuthenticationPrincipal UserDetailsImpl userDetails, @PathVariable Long commentId) {
         return commentLikeService.CommentLike(userDetails.getUser(),commentId);
     }
