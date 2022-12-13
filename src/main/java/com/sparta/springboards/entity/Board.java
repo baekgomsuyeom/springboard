@@ -22,10 +22,11 @@ public class Board extends Timestamped {
 
     //PK(Primary Key: DB 테이블의 유일한 값)임을 지정해줌. 특정 속성을 기본키로 설정
     //@Id 어노테이션만 적게될 경우 기본키값을 직접 부여해줘야 함 --> 그래서 @GeneratedValue 를 사용
-    @Id
+
     //@GeneratedValue(strategy = GenerationType.IDENTITY) 또는 SEQUENCE) 또는 TABLE) 또는 AUTO)
     //각각의 기능: 기본 키 생성을 DB에 위임 (Mysql), DB 시퀀스를 사용해서 기본 키 할당 (ORACLE), 키 생성 테이블 사용 (모든 DB 사용 가능), 선택된 DB에 따라 자동으로 전략 선택
     //AUTO: DB에 따라 전략을 JPA 가 자동으로 선택되므로, DB를 변경해도 코드를 수정할 필요 없다는 장점
+    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
@@ -65,7 +66,6 @@ public class Board extends Timestamped {
     public void update(BoardRequestDto boardrequestDto) {       //boardrequestDto? requestDto?
         this.title = boardrequestDto.getTitle();             //this.title: (위에서 선언된) 필드, BoardRequestDto 객체의 requestDto 매개변수로 들어온 데이터를 getTitle() 에 담는다(DB 로 보내기 위해)
         this.contents = boardrequestDto.getContents();
-
     }
 
     public void updateLikeCount(int i) {

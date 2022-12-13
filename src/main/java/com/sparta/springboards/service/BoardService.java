@@ -6,6 +6,7 @@ import com.sparta.springboards.dto.CommentResponseDto;
 import com.sparta.springboards.entity.*;
 import com.sparta.springboards.repository.BoardLikeRepository;
 import com.sparta.springboards.repository.BoardRepository;
+import com.sparta.springboards.repository.CommentLikeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,6 +25,7 @@ public class BoardService {
     //의존성 주입
     private final BoardRepository boardRepository;
     private final BoardLikeRepository boardLikeRepository;
+    private final CommentLikeRepository commentLikeRepository;
     //private final UserRepository userRepository;
     //private final JwtUtil jwtUtil;
 
@@ -58,7 +60,8 @@ public class BoardService {
 
             List<CommentResponseDto> commentList = new ArrayList<>();
             for (Comment comment : board.getComments()) {
-                commentList.add(new CommentResponseDto(comment));
+
+                commentList.add(new CommentResponseDto(comment, commentLikeRepository.countAllByComment_Id(comment.getId())));
             }
 
             //board 를 새롭게 BoardResponseDto 로 옮겨담고, BoardResponseDto 를 boardResponseDto 안에 추가(add)한다
@@ -81,8 +84,14 @@ public class BoardService {
                 //매개변수가 의도치 않는 상황 유발시
                 () -> new IllegalArgumentException("아이디가 존재하지 않습니다.")
         );
+
+        List<CommentResponseDto> commentList = new ArrayList<>();
+        for (Comment comment : board.getComments()) {
+            commentList.add(new CommentResponseDto(comment));
+        }
+
         //데이터가 들어간 객체 board 를 BoardResponseDto 로 반환
-        return new BoardResponseDto(board);
+        return new BoardResponseDto(board, commentList);
     }
 
     //선택한 게시글 수정(변경)
@@ -97,7 +106,7 @@ public class BoardService {
         if(user.getRole().equals(UserRoleEnum.ADMIN)) {
             board = boardRepository.findById(id).orElseThrow(
                     () -> new IllegalArgumentException("게시글이 존재하지 않습니다.")
-                    //() -> new RequestException(ErrorCode.게시글이_존재하지_않습니다_400)
+                    //() -> new RequestException(ErrorCoded .게시글이_존재하지_않습니다_400)
             );
 
         } else {
@@ -109,7 +118,13 @@ public class BoardService {
 
         board.update(requestDto);
 
-        return new BoardResponseDto(board);
+        List<CommentResponseDto> commentList = new ArrayList<>();
+        for (Comment comment : board.getComments()) {
+            commentList.add(new CommentResponseDto(comment));
+        }
+
+        //데이터가 들어간 객체 board 를 BoardResponseDto 로 반환
+        return new BoardResponseDto(board, commentList);
 
     }
 
