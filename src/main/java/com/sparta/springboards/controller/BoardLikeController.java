@@ -13,13 +13,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/board/like")
+@RequestMapping("/api/like")
 @RequiredArgsConstructor
 public class BoardLikeController {
 
     private final BoardLikeService boardLikeService;
 
-    @PostMapping("/{boardId}")
+    @PostMapping("/board/{boardId}")
     public ResponseEntity<MsgResponseDto> saveBoardLike(
             @PathVariable Long boardId,
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
