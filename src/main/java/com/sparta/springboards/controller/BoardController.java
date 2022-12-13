@@ -51,9 +51,9 @@ public class BoardController {
     @GetMapping("/post/{id}")
     //BoardResponseDto 반환 타입, getBoards 메소드 명
     //@PathVariable: URL 경로에 변수를 넣기, Long id: 담을 데이터 --> 전체 게시글 목록에서 id 값으로 각각의 게시글을 구별
-    public BoardResponseDto getBoards(@PathVariable Long id) {
+    public BoardResponseDto getBoards(@PathVariable Long id, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         //id 값을 담아서, boardService 로 응답을 보냄
-        return boardService.getBoard(id);
+        return boardService.getBoard(id, userDetails.getUser());
     }
 
     //선택한 게시글 수정(변경)

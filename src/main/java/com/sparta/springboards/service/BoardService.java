@@ -78,7 +78,7 @@ public class BoardService {
     //선택한 게시글 조회
     @Transactional(readOnly = true)
     //BoardResponseDto 반환 타입, getBoard 메소드 명, Long id: 담을 데이터
-    public BoardResponseDto getBoard(Long id) {
+    public BoardResponseDto getBoard(Long id, User user) {
         //Board: Entity 명, boardRepository 와 연결해서, id 를 찾는다
         Board board = boardRepository.findById(id).orElseThrow(
                 //매개변수가 의도치 않는 상황 유발시
@@ -91,7 +91,11 @@ public class BoardService {
         }
 
         //데이터가 들어간 객체 board 를 BoardResponseDto 로 반환
-        return new BoardResponseDto(board, commentList);
+        return new BoardResponseDto(
+                board,
+                commentList,
+                // 해당 회원의 해당 게시글 좋아요 여부
+                (checkBoardLike(board.getId(), user)));
     }
 
     //선택한 게시글 수정(변경)
@@ -124,7 +128,11 @@ public class BoardService {
         }
 
         //데이터가 들어간 객체 board 를 BoardResponseDto 로 반환
-        return new BoardResponseDto(board, commentList);
+        return new BoardResponseDto(
+                board,
+                commentList,
+                // 해당 회원의 해당 게시글 좋아요 여부
+                (checkBoardLike(board.getId(), user)));
 
     }
 
