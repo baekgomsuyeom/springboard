@@ -31,7 +31,7 @@ public class CommentLikeService {
         );
 
         if (commentLikeRepository.findByComment_IdAndUser_Id(commentId, user.getId()).isEmpty()){
-            comment.commentLikeUpDown(1);
+//            comment.commentLikeUpDown(1);
             CommentLike commentLike = CommentLike.builder()
                     .comment(comment)
                     .user(user)
@@ -39,7 +39,7 @@ public class CommentLikeService {
             commentLikeRepository.save(commentLike);
             return new MsgResponseDto("추천!!", HttpStatus.OK.value());
         }else{
-            comment.commentLikeUpDown(-1);
+//            comment.commentLikeUpDown(-1);
             commentLikeRepository.deleteByComment_IdAndUser_Id(comment.getId(), user.getId());
             return new MsgResponseDto("추천 취소", HttpStatus.OK.value());
         }

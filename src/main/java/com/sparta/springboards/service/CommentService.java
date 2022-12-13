@@ -7,6 +7,7 @@ import com.sparta.springboards.entity.Comment;
 import com.sparta.springboards.entity.User;
 import com.sparta.springboards.entity.UserRoleEnum;
 import com.sparta.springboards.repository.BoardRepository;
+import com.sparta.springboards.repository.CommentLikeRepository;
 import com.sparta.springboards.repository.CommentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -19,6 +20,7 @@ public class CommentService {
 
     private final CommentRepository commentRepository;
     private final BoardRepository boardRepository;
+    private final CommentLikeRepository commentLikeRepository;
 
     @Transactional
     public CommentResponseDto createComment(Long id, CommentRequestDto commentRequestDto, User user) {
@@ -27,7 +29,8 @@ public class CommentService {
         );
 
         Comment comment = commentRepository.save(new Comment(commentRequestDto, board, user));
-        return new CommentResponseDto(comment);
+        int cnt = 0;
+        return new CommentResponseDto(comment,cnt);
     }
 
     @Transactional
@@ -54,7 +57,7 @@ public class CommentService {
 
         comment.update(commentRequestDto);
 
-        return new CommentResponseDto(comment);
+        return new CommentResponseDto(comment ,commentLikeRepository.countAllByComment_Id(comment.getId()));
     }
 
     @Transactional
@@ -82,6 +85,6 @@ public class CommentService {
         // 해당 댓글 삭제
         commentRepository.deleteById(cmtId);
 
-        return new CommentResponseDto(comment);
+        return new CommentResponseDto(comment,commentLikeRepository.countAllByComment_Id(comment.getId()));
     }
 }

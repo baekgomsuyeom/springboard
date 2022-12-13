@@ -8,6 +8,7 @@ import com.sparta.springboards.entity.Comment;
 import com.sparta.springboards.entity.User;
 import com.sparta.springboards.entity.UserRoleEnum;
 import com.sparta.springboards.repository.BoardRepository;
+import com.sparta.springboards.repository.CommentLikeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,6 +25,7 @@ public class BoardService {
 
     //의존성 주입
     private final BoardRepository boardRepository;
+    private final CommentLikeRepository commentLikeRepository;
     //private final UserRepository userRepository;
     //private final JwtUtil jwtUtil;
 
@@ -58,7 +60,8 @@ public class BoardService {
 
             List<CommentResponseDto> commentList = new ArrayList<>();
             for (Comment comment : board.getComments()) {
-                commentList.add(new CommentResponseDto(comment));
+
+                commentList.add(new CommentResponseDto(comment, commentLikeRepository.countAllByComment_Id(comment.getId())));
             }
 
             //board 를 새롭게 BoardResponseDto 로 옮겨담고, BoardResponseDto 를 boardResponseDto 안에 추가(add)한다

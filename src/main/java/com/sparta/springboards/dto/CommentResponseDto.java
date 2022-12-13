@@ -21,11 +21,11 @@ public class CommentResponseDto {
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
 
-    public CommentResponseDto (Comment comment) {
+    public CommentResponseDto (Comment comment, int cnt) {
         this.id = comment.getId();
         this.username = comment.getUsername();
         this.comment = comment.getComment();
-        this.CommentLike = comment.getCommentLike();
+        this.CommentLike = cnt;
         this.createdAt = comment.getCreatedAt();
         this.modifiedAt = comment.getModifiedAt();
     }
