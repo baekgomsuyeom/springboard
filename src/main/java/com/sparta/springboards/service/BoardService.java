@@ -80,8 +80,14 @@ public class BoardService {
                 //매개변수가 의도치 않는 상황 유발시
                 () -> new IllegalArgumentException("아이디가 존재하지 않습니다.")
         );
+
+        List<CommentResponseDto> commentList = new ArrayList<>();
+        for (Comment comment : board.getComments()) {
+            commentList.add(new CommentResponseDto(comment));
+        }
+
         //데이터가 들어간 객체 board 를 BoardResponseDto 로 반환
-        return new BoardResponseDto(board);
+        return new BoardResponseDto(board, commentList);
     }
 
     //선택한 게시글 수정(변경)
@@ -108,7 +114,13 @@ public class BoardService {
 
         board.update(requestDto);
 
-        return new BoardResponseDto(board);
+        List<CommentResponseDto> commentList = new ArrayList<>();
+        for (Comment comment : board.getComments()) {
+            commentList.add(new CommentResponseDto(comment));
+        }
+
+        //데이터가 들어간 객체 board 를 BoardResponseDto 로 반환
+        return new BoardResponseDto(board, commentList);
 
     }
 

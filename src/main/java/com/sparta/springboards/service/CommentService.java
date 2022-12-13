@@ -36,7 +36,7 @@ public class CommentService {
     @Transactional
     public CommentResponseDto updateComment(Long boardId, Long cmtId, CommentRequestDto commentRequestDto, User user) {
 
-        // 게시글의 DB 저장 유무 확인
+        //DB 에 게시글 저장 확인
         Board board = boardRepository.findById(boardId).orElseThrow (
                 () -> new IllegalArgumentException("게시글이 존재하지 않습니다.")
         );
@@ -63,7 +63,7 @@ public class CommentService {
     @Transactional
     public CommentResponseDto deleteComment(Long boardId, Long cmtId, User user) {
 
-        // 게시글의 DB 저장 유무 확인
+        //DB 에 게시글 저장 확인
         Board board = boardRepository.findById(boardId).orElseThrow (
                 () -> new IllegalArgumentException("게시글이 존재하지 않습니다.")
         );
@@ -82,7 +82,7 @@ public class CommentService {
             );
         }
 
-        // 해당 댓글 삭제
+        //해당 댓글 삭제
         commentRepository.deleteById(cmtId);
 
         return new CommentResponseDto(comment,commentLikeRepository.countAllByComment_Id(comment.getId()));
