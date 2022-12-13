@@ -37,4 +37,9 @@ public class CommentController {
         commentService.deleteComment(boardId, cmtId, userDetails.getUser());
         return ResponseEntity.ok(new MsgResponseDto("삭제 성공", HttpStatus.OK.value()));
     }
+
+    @PostMapping("/like/{commentId}")
+    public MsgResponseDto commentLike(@AuthenticationPrincipal UserDetailsImpl userDetails, @PathVariable Long commentId) {
+        return commentService.CommentLike(userDetails.getUser(),commentId);
+    }
 }
