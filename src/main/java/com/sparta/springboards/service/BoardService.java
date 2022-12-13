@@ -87,7 +87,7 @@ public class BoardService {
 
         List<CommentResponseDto> commentList = new ArrayList<>();
         for (Comment comment : board.getComments()) {
-            commentList.add(new CommentResponseDto(comment));
+            commentList.add(new CommentResponseDto(comment,commentLikeRepository.countAllByComment_Id(comment.getId())));
         }
 
         //데이터가 들어간 객체 board 를 BoardResponseDto 로 반환
@@ -120,7 +120,7 @@ public class BoardService {
 
         List<CommentResponseDto> commentList = new ArrayList<>();
         for (Comment comment : board.getComments()) {
-            commentList.add(new CommentResponseDto(comment));
+            commentList.add(new CommentResponseDto(comment, commentLikeRepository.countAllByComment_Id(comment.getId())));
         }
 
         //데이터가 들어간 객체 board 를 BoardResponseDto 로 반환
