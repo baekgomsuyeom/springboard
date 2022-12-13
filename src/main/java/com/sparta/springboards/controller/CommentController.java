@@ -4,7 +4,6 @@ import com.sparta.springboards.dto.CommentRequestDto;
 import com.sparta.springboards.dto.CommentResponseDto;
 import com.sparta.springboards.dto.MsgResponseDto;
 import com.sparta.springboards.security.UserDetailsImpl;
-import com.sparta.springboards.service.CommentLikeService;
 import com.sparta.springboards.service.CommentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -19,7 +18,6 @@ import org.springframework.web.bind.annotation.*;
 public class CommentController {
 
     private final CommentService commentService;
-    private final CommentLikeService commentLikeService;
 
     //댓글 작성
     @PostMapping("/{id}")
