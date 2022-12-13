@@ -21,5 +21,4 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
         return new UserDetailsImpl(user, user.getUsername());
     }
-
 }
