@@ -4,6 +4,7 @@ import com.sparta.springboards.dto.CommentRequestDto;
 import com.sparta.springboards.dto.CommentResponseDto;
 import com.sparta.springboards.dto.MsgResponseDto;
 import com.sparta.springboards.security.UserDetailsImpl;
+import com.sparta.springboards.service.CommentLikeService;
 import com.sparta.springboards.service.CommentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 public class CommentController {
 
     private final CommentService commentService;
+    private final CommentLikeService commentLikeService;
 
     //댓글 작성
     @PostMapping("/{id}")
@@ -36,5 +38,10 @@ public class CommentController {
     public ResponseEntity<MsgResponseDto> deleteComment(@PathVariable Long boardId, @PathVariable Long cmtId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         commentService.deleteComment(boardId, cmtId, userDetails.getUser());
         return ResponseEntity.ok(new MsgResponseDto("삭제 성공", HttpStatus.OK.value()));
+    }
+
+    @PostMapping("/like/{commentId}")
+    public MsgResponseDto commentLike(@AuthenticationPrincipal UserDetailsImpl userDetails, @PathVariable Long commentId) {
+        return commentService.CommentLike(userDetails.getUser(),commentId);
     }
 }

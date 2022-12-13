@@ -7,6 +7,7 @@ import com.sparta.springboards.security.UserDetailsImpl;
 import com.sparta.springboards.service.BoardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,7 +30,7 @@ public class BoardController {
     private final BoardService boardService;    //boardService 를 가져다 쓰겠다 (의존성 주입)
 
     //게시글 작성
-    @PostMapping("/post")
+    @PostMapping("/board")
     //BoardResponseDto 반환 타입, createBoard 메소드 명
     //@RequestBody: HTTP Method 안의 body 값을 Mapping(key:value 로 짝지어줌), BoardRequestDto: 넘어오는 데이터를 받아주는 객체
     //@AuthenticationPrincipal: 인증 객체(Authentication)의 Principal 부분의 값을 가져온다
@@ -40,7 +41,7 @@ public class BoardController {
     }
 
     //전체 게시글 목록 조회
-    @GetMapping("/posts")
+    @GetMapping("/boards")
     //BoardResponseDto 를 List 로 반환하는 타입, getListBoards 메소드 명, () 전부 Client 에게로 반환하므로 비워둠
     public List<BoardResponseDto> getListBoards(@AuthenticationPrincipal UserDetailsImpl userDetails) {
         //() 모든 데이터를 담아서, boardService 로 응답을 보냄
@@ -48,7 +49,7 @@ public class BoardController {
     }
 
     //선택한 게시글 조회
-    @GetMapping("/post/{id}")
+    @GetMapping("/board/{id}")
     //BoardResponseDto 반환 타입, getBoards 메소드 명
     //@PathVariable: URL 경로에 변수를 넣기, Long id: 담을 데이터 --> 전체 게시글 목록에서 id 값으로 각각의 게시글을 구별
     public BoardResponseDto getBoards(@PathVariable Long id, @AuthenticationPrincipal UserDetailsImpl userDetails) {
@@ -57,7 +58,7 @@ public class BoardController {
     }
 
     //선택한 게시글 수정(변경)
-    @PutMapping("/post/{id}")
+    @PutMapping("/board/{id}")
     //BoardResponseDto 반환 타입, updateBoard 메소드 명
     //@PathVariable: URL 경로에 변수를 넣기, Long id: 담을 데이터,
     //@RequestBody: HTTP Method 안의 body 값을 Mapping(key:value 로 짝지어줌), BoardRequestDto: 넘어오는 데이터를 받아주는 객체
@@ -69,7 +70,7 @@ public class BoardController {
     }
 
     //선택한 게시글 삭제
-    @DeleteMapping("/post/{id}")
+    @DeleteMapping("/board/{id}")
     //MsgResponseDto 반환 타입, deleteBoard 메소드 명
     //@PathVariable: URL 경로에 변수를 넣기, Long id: 담을 데이터
     //@AuthenticationPrincipal: 인증 객체(Authentication)의 Principal 부분의 값을 가져온다
@@ -77,5 +78,12 @@ public class BoardController {
     public MsgResponseDto deleteBoard(@PathVariable Long id, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         boardService.deleteBoard(id,userDetails.getUser());
         return new MsgResponseDto("삭제 성공", HttpStatus.OK.value());
+    }
+
+    @PostMapping("/board/like/{boardId}")
+    public ResponseEntity<MsgResponseDto> saveBoardLike(
+            @PathVariable Long boardId,
+            @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return ResponseEntity.ok().body(boardService.saveBoardLike(boardId, userDetails.getUser()));
     }
 }
