@@ -4,6 +4,7 @@ import com.sparta.springboards.dto.LoginRequestDto;
 import com.sparta.springboards.dto.SignupRequestDto;
 import com.sparta.springboards.entity.User;
 import com.sparta.springboards.entity.UserRoleEnum;
+import com.sparta.springboards.exception.CustomException;
 import com.sparta.springboards.jwt.JwtUtil;
 import com.sparta.springboards.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +16,8 @@ import org.springframework.validation.annotation.Validated;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.util.Optional;
+
+import static com.sparta.springboards.exception.ErrorCode.*;
 
 @Service
 
@@ -46,7 +49,7 @@ public class UserService {
         //중복된 유저가 존재한다면,
         if (found.isPresent()) {
             //해당 메시지 보내기
-            throw new IllegalArgumentException("중복된 사용자가 존재합니다.");
+            throw new CustomException(DUPLICATED_USERNAME);
         }
 
         // 사용자 ROLE(권한) 확인
@@ -56,7 +59,7 @@ public class UserService {
             //들어온 Token 값과 위의 검증을 위한 Token 값(위쪽에 AAABnvxRVklrnYxKZ0aHgTBcXukeZygoC)이 일치하는지 확인
             if (!signupRequestDto.getAdminToken().equals(ADMIN_TOKEN)) {
                 //일치하지 않으면(매개변수가 의도치 않는 상황 유발시), 해당 메시지를 보낸다
-                throw new IllegalArgumentException("관리자 암호가 틀려 등록이 불가능합니다.");
+                throw new CustomException(INVALID_AUTH_TOKEN);
             }
             //일치하면, user 를 admin 타입으로 바꾼다
             role = UserRoleEnum.ADMIN;
@@ -78,13 +81,13 @@ public class UserService {
         //username 을 통해 확인해서, 있다면 User 객체에 담긴다
         User user = userRepository.findByUsername(username).orElseThrow(
                 //없다면(매개변수가 의도치 않는 상황 유발시), 해당 메시지 보내기
-                () -> new IllegalArgumentException("등록된 사용자가 없습니다.")
+                () -> new CustomException(NOT_FOUND_USER)
         );
         // 비밀번호 확인
         //User 객체에 들어있던 Password 와 가지고 온 Password(String password = loginRequestDto.getPassword() 에 있는) 가 일치하는지 확인
         //일치하지 않는다면, 해당 메시지 보내기
         if(!passwordEncoder.matches(password, user.getPassword())) {
-            throw  new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+            throw  new CustomException(NOT_MATCH_INFORMATION);
         }
 
         //response 에 addHeader() 를 사용해서, Header 쪽에 값을 넣는데

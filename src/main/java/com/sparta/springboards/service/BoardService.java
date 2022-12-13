@@ -4,6 +4,7 @@ import com.sparta.springboards.dto.BoardRequestDto;
 import com.sparta.springboards.dto.BoardResponseDto;
 import com.sparta.springboards.dto.CommentResponseDto;
 import com.sparta.springboards.entity.*;
+import com.sparta.springboards.exception.CustomException;
 import com.sparta.springboards.repository.BoardLikeRepository;
 import com.sparta.springboards.repository.BoardRepository;
 import com.sparta.springboards.repository.CommentLikeRepository;
@@ -14,6 +15,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+import static com.sparta.springboards.exception.ErrorCode.*;
 
 @Service
 
@@ -82,7 +85,7 @@ public class BoardService {
         //Board: Entity 명, boardRepository 와 연결해서, id 를 찾는다
         Board board = boardRepository.findById(id).orElseThrow(
                 //매개변수가 의도치 않는 상황 유발시
-                () -> new IllegalArgumentException("아이디가 존재하지 않습니다.")
+                () -> new CustomException(NOT_FOUND_USER)
         );
 
         List<CommentResponseDto> commentList = new ArrayList<>();
@@ -109,14 +112,14 @@ public class BoardService {
         //user 의 권한이 ADMIN 와 같다면,
         if(user.getRole().equals(UserRoleEnum.ADMIN)) {
             board = boardRepository.findById(id).orElseThrow(
-                    () -> new IllegalArgumentException("게시글이 존재하지 않습니다.")
+                    () -> new CustomException(NOT_FOUND_BOARD)
                     //() -> new RequestException(ErrorCoded .게시글이_존재하지_않습니다_400)
             );
 
         } else {
             //user 의 권한이 ADMIN 이 아니라면, 아이디가 같은 유저만 수정 가능
             board = boardRepository.findByIdAndUserId(id, user.getId()).orElseThrow(
-                    () -> new IllegalArgumentException("아이디가 존재하지 않습니다.")
+                    () -> new CustomException(NOT_FOUND_USER)
             );
         }
 
@@ -147,14 +150,14 @@ public class BoardService {
         //user 의 권한이 ADMIN 와 같다면,
         if(user.getRole().equals(UserRoleEnum.ADMIN)) {
             board = boardRepository.findById(id).orElseThrow(
-                    () -> new IllegalArgumentException("게시글이 존재하지 않습니다.")
+                    () -> new CustomException(NOT_FOUND_BOARD)
                     //() -> new RequestException(ErrorCode.게시글이_존재하지_않습니다_400)
             );
 
         } else {
             //user 의 권한이 ADMIN 이 아니라면, 아이디가 같은 유저만 수정 가능
             board = boardRepository.findByIdAndUserId(id, user.getId()).orElseThrow(
-                    () -> new IllegalArgumentException("아이디가 존재하지 않습니다.")
+                    () -> new CustomException(NOT_FOUND_USER)
             );
         }
 
