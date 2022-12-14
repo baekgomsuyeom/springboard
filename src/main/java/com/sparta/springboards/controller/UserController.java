@@ -24,7 +24,6 @@ import javax.validation.Valid;
 
 //url 에서 공통되는 부분
 @RequestMapping("/api/auth")
-
 public class UserController {
 
     //HTTP request 를 받아서, Service 쪽으로 넘겨주고, 가져온 데이터들을 requestDto 파라미터로 보냄
@@ -35,7 +34,7 @@ public class UserController {
     //ResponseEntity: 결과값, 상태코드, 헤더값을 모두 프론트에 넘겨줄 수 있고, 에러코드 또한 섬세하게 설정해서 보내줄 수 있음 --> 구글링 필요, MsgResponseDto 의 데이터를 반환할 것임, signup 메소드 명
     //@RequestBody: HTTP Method 안의 body 값을 Mapping(key:value 로 짝지어줌), SignupRequestDto: 넘어오는 데이터를 받아주는 객체
     //@Valid: Controller 에서 유효성 검사를 할 곳에 붙임
-    public ResponseEntity<MsgResponseDto> signup(@RequestBody @Valid SignupRequestDto signupRequestDto) {   //(@RequestBody @Valid SignupRequestDto signupRequestDto)?
+    public ResponseEntity<MsgResponseDto> signup(@Valid @RequestBody SignupRequestDto signupRequestDto) {   //(@RequestBody @Valid SignupRequestDto signupRequestDto)?
         //signupRequestDto 에 데이터를 담아서, userService 로 응답을 보냄
         userService.signup(signupRequestDto);
         //MsgResponseDto 에서 선언한 타입(여기서는 String message, int statusCode)으로 반환하는데,
