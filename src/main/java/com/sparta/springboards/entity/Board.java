@@ -34,6 +34,9 @@ public class Board extends Timestamped {
     @OrderBy("createdAt DESC")
     private List<Comment> comments = new ArrayList<>();
 
+    @OneToMany(mappedBy = "board", cascade = CascadeType.REMOVE)
+    private List<BoardLike> boardLikeList = new ArrayList<>();
+
     //객체 필드를 테이블 컬럼과 매핑 + 여러 속성 설정 가능
     //nullable: null 허용 여부
     @Column(nullable = false)
@@ -44,9 +47,6 @@ public class Board extends Timestamped {
 
     @Column(nullable = false)
     private String contents;
-
-    @Column(nullable = false)
-    private int likeCount;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
@@ -66,9 +66,5 @@ public class Board extends Timestamped {
     public void update(BoardRequestDto boardrequestDto) {       //boardrequestDto? requestDto?
         this.title = boardrequestDto.getTitle();             //this.title: (위에서 선언된) 필드, BoardRequestDto 객체의 requestDto 매개변수로 들어온 데이터를 getTitle() 에 담는다(DB 로 보내기 위해)
         this.contents = boardrequestDto.getContents();
-    }
-
-    public void updateLikeCount(int i) {
-        this.likeCount += i;
     }
 }

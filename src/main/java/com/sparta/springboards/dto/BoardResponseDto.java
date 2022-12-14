@@ -21,8 +21,8 @@ public class BoardResponseDto {
     private String title;
     private String contents;
     private String username;
-    private int likeCount;
-    private boolean likeCheck;
+    private int boardLikeCount;
+    private boolean boardLikeCheck;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
 
@@ -44,8 +44,8 @@ public class BoardResponseDto {
         this.id = board.getId();            //this.id: (위에서 선언된) 필드, Board 객체의 board 매개변수로 들어온 데이터를 getId() 에 담는다(Client 에게로 보내기 위해)
         this.title = board.getTitle();
         this.contents = board.getContents();
-        this.likeCount = board.getLikeCount();
-        this.likeCheck = boardLikeCheck;
+        this.boardLikeCount = board.getBoardLikeList().size();
+        this.boardLikeCheck = boardLikeCheck;
         this.createdAt = board.getCreatedAt();
         this.modifiedAt = board.getModifiedAt();
         this.commentList = commentList;

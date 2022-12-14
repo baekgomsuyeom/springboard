@@ -173,7 +173,7 @@ public class BoardService {
     public boolean checkBoardLike(Long boardId, User user) {
         // 해당 회원의 좋아요 여부 확인
         Optional<BoardLike> boardLike = boardLikeRepository.findByBoardIdAndUserId(boardId, user.getId());
-        return boardLike.isEmpty();
+        return boardLike.isPresent();
     }
 
     @Transactional
@@ -184,13 +184,11 @@ public class BoardService {
         );
 
         // 해당 회원의 좋아요 여부를 확인하고 비어있으면 좋아요, 아니면 좋아요 취소
-        if (checkBoardLike(boardId, user)) {
+        if (!checkBoardLike(boardId, user)) {
             boardLikeRepository.saveAndFlush(new BoardLike(board, user));
-            board.updateLikeCount(1);
             return new MsgResponseDto("좋아요 완료", HttpStatus.OK.value());
         } else {
             boardLikeRepository.deleteByBoardIdAndUserId(boardId, user.getId());
-            board.updateLikeCount(-1);
             return new MsgResponseDto("좋아요 취소", HttpStatus.OK.value());
         }
     }
