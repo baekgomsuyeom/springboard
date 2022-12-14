@@ -64,7 +64,7 @@ public class BoardService {
             for (Board board : boardList) {
                 List<CommentResponseDto> commentList = new ArrayList<>();
                 for (Comment comment : board.getComments()) {
-                    commentList.add(new CommentResponseDto(comment, commentLikeRepository.countAllByComment_Id(comment.getId())));
+                    commentList.add(new CommentResponseDto(comment, commentLikeRepository.countAllByCommentId(comment.getId())));
                 }
                 boardResponseDto.add(new BoardResponseDto(
                         board,
@@ -74,7 +74,7 @@ public class BoardService {
             return boardResponseDto;
         } else {
             //boardRepository 와 연결해서, 모든 데이터들을 내림차순으로, List 타입으로 객체 Board 에 저장된 데이터들을 boardList 안에 담는다
-            List<Board> boardList =  boardRepository.findAllByOrderByModifiedAtDesc();      //주의. boards 와 board
+            List<Board> boardList =  boardRepository.findAllByOrderByCreatedAtDesc();      //주의. boards 와 board
             //boardResponseDto 를 새롭게 만든다 --> 텅 빈 상태 (빈 주머니 상태?)
             List<BoardResponseDto> boardResponseDto = new ArrayList<>();
 
@@ -84,7 +84,7 @@ public class BoardService {
                 List<CommentResponseDto> commentList = new ArrayList<>();
                 for (Comment comment : board.getComments()) {
 
-                    commentList.add(new CommentResponseDto(comment, commentLikeRepository.countAllByComment_Id(comment.getId())));
+                    commentList.add(new CommentResponseDto(comment, commentLikeRepository.countAllByCommentId(comment.getId())));
                 }
 
                 //board 를 새롭게 BoardResponseDto 로 옮겨담고, BoardResponseDto 를 boardResponseDto 안에 추가(add)한다
@@ -111,7 +111,7 @@ public class BoardService {
 
         List<CommentResponseDto> commentList = new ArrayList<>();
         for (Comment comment : board.getComments()) {
-            commentList.add(new CommentResponseDto(comment,commentLikeRepository.countAllByComment_Id(comment.getId())));
+            commentList.add(new CommentResponseDto(comment,commentLikeRepository.countAllByCommentId(comment.getId())));
         }
 
         //데이터가 들어간 객체 board 를 BoardResponseDto 로 반환
@@ -147,7 +147,7 @@ public class BoardService {
 
         List<CommentResponseDto> commentList = new ArrayList<>();
         for (Comment comment : board.getComments()) {
-            commentList.add(new CommentResponseDto(comment, commentLikeRepository.countAllByComment_Id(comment.getId())));
+            commentList.add(new CommentResponseDto(comment, commentLikeRepository.countAllByCommentId(comment.getId())));
         }
 
         if(requestDto.getCategory().equals("TIL") || requestDto.getCategory().equals("Spring") || requestDto.getCategory().equals("Java")){

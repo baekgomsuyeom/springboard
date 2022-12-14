@@ -63,7 +63,7 @@ public class CommentService {
 
         comment.update(commentRequestDto);
 
-        return new CommentResponseDto(comment ,commentLikeRepository.countAllByComment_Id(comment.getId()));
+        return new CommentResponseDto(comment ,commentLikeRepository.countAllByCommentId(comment.getId()));
     }
 
     @Transactional
@@ -85,7 +85,7 @@ public class CommentService {
         }
         //해당 댓글 삭제
         commentRepository.deleteById(cmtId);
-        return new CommentResponseDto(comment,commentLikeRepository.countAllByComment_Id(comment.getId()));
+        return new CommentResponseDto(comment,commentLikeRepository.countAllByCommentId(comment.getId()));
     }
 
     @Transactional
@@ -93,7 +93,7 @@ public class CommentService {
         Comment comment = commentRepository.findById(commentId).orElseThrow(
                 () -> new IllegalArgumentException("댓글을 찾을 수 없습니다.")
         );
-        if (commentLikeRepository.findByComment_IdAndUser_Id(commentId, user.getId()).isEmpty()){
+        if (commentLikeRepository.findByCommentIdAndUserId(commentId, user.getId()).isEmpty()){
             CommentLike commentLike = CommentLike.builder()
                     .comment(comment)
                     .user(user)
@@ -101,7 +101,7 @@ public class CommentService {
             commentLikeRepository.save(commentLike);
             return new MsgResponseDto("좋아요 완료", HttpStatus.OK.value());
         }else {
-            commentLikeRepository.deleteByComment_IdAndUser_Id(comment.getId(), user.getId());
+            commentLikeRepository.deleteByCommentIdAndUserId(comment.getId(), user.getId());
             return new MsgResponseDto("좋아요 취소", HttpStatus.OK.value());
         }
     }

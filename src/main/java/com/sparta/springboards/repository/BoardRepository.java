@@ -11,7 +11,7 @@ import java.util.Optional;
 public interface BoardRepository extends JpaRepository<Board, Long> {
 
     //전체 게시글 목록 조회
-    List<Board> findAllByOrderByModifiedAtDesc();
+    List<Board> findAllByOrderByCreatedAtDesc();
     List<Board> findAllByCategoryOrderByCreatedAtDesc(String category);
 
     //게시글 수정, 삭제
