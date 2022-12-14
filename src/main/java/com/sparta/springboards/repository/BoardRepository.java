@@ -12,6 +12,7 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
 
     //전체 게시글 목록 조회
     List<Board> findAllByOrderByModifiedAtDesc();
+    List<Board> findAllByCategoryOrderByCreatedAtDesc(String category);
 
     //게시글 수정, 삭제
     //Optional: null 을 반환하면 오류가 발생할 가능성이 매우 높은 경우에 '결과 없음'을 명확하게 드러내기 위해
