@@ -18,7 +18,7 @@ public class Comment extends Timestamped {
     @ManyToOne
     @JoinColumn(name = "board_id", nullable = false)
     private Board board;
-//
+
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
@@ -29,8 +29,7 @@ public class Comment extends Timestamped {
     @Column(nullable = false)
     private String comment;
 
-//    @Column
-//    private int commentLike;
+
 
 
 
@@ -39,13 +38,9 @@ public class Comment extends Timestamped {
         this.username = user.getUsername();
         this.board = board;
         this.user = user;
-//        this.commentLike =0;
     }
 
     public void update(CommentRequestDto commentRequestDto) {
         this.comment = commentRequestDto.getComment();
     }
-//    public void commentLikeUpDown(int num) {
-//        commentLike = commentLike +num;
-//    }
 }

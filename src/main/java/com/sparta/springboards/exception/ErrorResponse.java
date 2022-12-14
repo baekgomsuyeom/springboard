@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 // 원래는 우리가 29번 라인에 있는 메서드만 존재했잖아요?
 // 그러면 빌더를 사용헀을떄 이렇게 생성자가 없으면 AllArgsConstructor가 암묵적으로 적용되는거임
-//근데 우리가 만들었어 그래서 AllArgsConstructor 를 넣어줬다 라고 할뻔 추측임..ㅎ
+// 근데 우리가 만들었어 그래서 AllArgsConstructor 를 넣어줬다 라고 할뻔 추측임..ㅎ
 public class ErrorResponse {
     private final LocalDateTime timestamp = LocalDateTime.now();
     private final int status;
