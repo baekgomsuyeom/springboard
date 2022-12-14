@@ -68,29 +68,23 @@ public class CommentService {
 
     @Transactional
     public CommentResponseDto deleteComment(Long boardId, Long cmtId, User user) {
-
         //DB 에 게시글 저장 확인
         Board board = boardRepository.findById(boardId).orElseThrow (
                 () -> new CustomException(NOT_FOUND_BOARD)
         );
-
         Comment comment;
-
         if (user.getRole().equals(UserRoleEnum.ADMIN)) {
             comment = commentRepository.findById(cmtId).orElseThrow(
                     () -> new CustomException(NOT_FOUND_COMMENT)
             );
-
         } else {
             //user 의 권한이 ADMIN 이 아니라면, 아이디가 같은 유저만 수정 가능
             comment = commentRepository.findByIdAndUserId(cmtId, user.getId()).orElseThrow(
                     () -> new CustomException(NOT_FOUND_COMMENT)
             );
         }
-
         //해당 댓글 삭제
         commentRepository.deleteById(cmtId);
-
         return new CommentResponseDto(comment,commentLikeRepository.countAllByComment_Id(comment.getId()));
     }
 
@@ -106,7 +100,7 @@ public class CommentService {
                     .build();
             commentLikeRepository.save(commentLike);
             return new MsgResponseDto("좋아요 완료", HttpStatus.OK.value());
-        }else{
+        }else {
             commentLikeRepository.deleteByComment_IdAndUser_Id(comment.getId(), user.getId());
             return new MsgResponseDto("좋아요 취소", HttpStatus.OK.value());
         }
