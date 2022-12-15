@@ -1,6 +1,5 @@
 package com.sparta.springboards.entity;
 
-//주의! 열거혐(enum)으로 만들어야 함
 public enum UserRoleEnum {
     USER(Authority.USER),  // 사용자 권한
     ADMIN(Authority.ADMIN);  // 관리자 권한

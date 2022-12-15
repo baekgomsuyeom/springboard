@@ -24,6 +24,4 @@ public class CommentLike {
     @ManyToOne
     @JoinColumn(name = "comment_like_User_id")
     private User user;
-
-
 }

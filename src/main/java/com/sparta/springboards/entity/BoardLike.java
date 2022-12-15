@@ -9,7 +9,6 @@ import javax.persistence.*;
 @Entity
 @NoArgsConstructor
 public class BoardLike {
-
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;

@@ -13,12 +13,12 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
-
     @ExceptionHandler(value = {CustomException.class})
     protected ResponseEntity<ErrorResponse> handleCustomException(CustomException e) {
         log.error("handleDataException throw Exception : {}", e.getErrorCode());
         return ErrorResponse.toResponseEntity(e.getErrorCode());
     }
+
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
                                                                   HttpHeaders headers,

@@ -14,9 +14,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/comment")
 @RequiredArgsConstructor
-
 public class CommentController {
-
     private final CommentService commentService;
 
     //댓글 작성
@@ -38,6 +36,7 @@ public class CommentController {
         return ResponseEntity.ok(new MsgResponseDto("삭제 성공", HttpStatus.OK.value()));
     }
 
+    //댓글 좋아요
     @PostMapping("/like/{commentId}")
     public MsgResponseDto commentLike(@AuthenticationPrincipal UserDetailsImpl userDetails, @PathVariable Long commentId) {
         return commentService.CommentLike(userDetails.getUser(),commentId);

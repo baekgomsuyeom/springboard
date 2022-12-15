@@ -10,7 +10,6 @@ import javax.persistence.*;
 @Getter
 @NoArgsConstructor
 public class Comment extends Timestamped {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -28,10 +27,6 @@ public class Comment extends Timestamped {
 
     @Column(nullable = false)
     private String comment;
-
-
-
-
 
     public Comment(CommentRequestDto commentRequestDto, Board board, User user) {
         this.comment = commentRequestDto.getComment();

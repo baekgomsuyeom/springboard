@@ -4,13 +4,11 @@ import com.sparta.springboards.entity.Comment;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
 import java.time.LocalDateTime;
 
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-
 
 //댓글 표시
 public class CommentResponseDto {

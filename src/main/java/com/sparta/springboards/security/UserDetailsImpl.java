@@ -11,7 +11,6 @@ import java.util.Collection;
 
 //회원 상세정보 (UserServiceImpl) 를 통해 "권한 (Authority)" 설정 가능
 public class UserDetailsImpl implements UserDetails {
-
     //인증이 완료된 사용자 추가
     private final User user;
     private final String username;
@@ -31,11 +30,9 @@ public class UserDetailsImpl implements UserDetails {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         UserRoleEnum role = user.getRole();
         String authority = role.getAuthority();
-
         SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority(authority);
         Collection<GrantedAuthority> authorities = new ArrayList<>();
         authorities.add(simpleGrantedAuthority);
-
         return authorities;
     }
 
@@ -44,27 +41,22 @@ public class UserDetailsImpl implements UserDetails {
     public String getUsername() {
         return this.username;
     }
-
     @Override
     public String getPassword() {
         return null;
     }
-
     @Override
     public boolean isAccountNonExpired() {
         return false;
     }
-
     @Override
     public boolean isAccountNonLocked() {
         return false;
     }
-
     @Override
     public boolean isCredentialsNonExpired() {
         return false;
     }
-
     @Override
     public boolean isEnabled() {
         return false;
