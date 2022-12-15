@@ -201,7 +201,7 @@ public class BoardService {
     public MsgResponseDto saveBoardLike(Long boardId, User user) {
         // 입력 받은 게시글 id와 일치하는 DB 조회
         Board board = boardRepository.findById(boardId).orElseThrow(
-                () -> new NullPointerException("게시글이 존재하지 않습니다.")
+                () -> new CustomException(NOT_FOUND_BOARD)
         );
 
         // 해당 회원의 좋아요 여부를 확인하고 비어있으면 좋아요, 아니면 좋아요 취소
