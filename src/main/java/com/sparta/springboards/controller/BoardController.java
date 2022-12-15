@@ -35,17 +35,17 @@ public class BoardController {
     //@RequestBody: HTTP Method 안의 body 값을 Mapping(key:value 로 짝지어줌), BoardRequestDto: 넘어오는 데이터를 받아주는 객체
     //@AuthenticationPrincipal: 인증 객체(Authentication)의 Principal 부분의 값을 가져온다
     //UserDetailsImpl userDetails: 인증 객체를 만들 때, Principal 부분에 userDetails 를 넣었기 때문에, userDetails 를 파라미터로 받아올 수 있었음
-    public BoardResponseDto createBoard(@RequestBody BoardRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public ResponseEntity<BoardResponseDto> createBoard(@RequestBody BoardRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         //데이터를 담아서, boardService 로 응답을 보냄
-        return boardService.createBoard(requestDto, userDetails.getUser());
+        return ResponseEntity.ok().body(boardService.createBoard(requestDto, userDetails.getUser()));
     }
 
     //전체 게시글 목록 조회
     @GetMapping("/boards")
     //BoardResponseDto 를 List 로 반환하는 타입, getListBoards 메소드 명, () 전부 Client 에게로 반환하므로 비워둠
-    public List<BoardResponseDto> getListBoards(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestParam String category) {
+    public ResponseEntity<List<BoardResponseDto>> getListBoards(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestParam String category) {
         //() 모든 데이터를 담아서, boardService 로 응답을 보냄
-        return boardService.getListBoards(userDetails.getUser(),category);
+        return ResponseEntity.ok().body(boardService.getListBoards(userDetails.getUser(),category));
     }
 
 
@@ -54,9 +54,9 @@ public class BoardController {
     @GetMapping("/board/{id}")
     //BoardResponseDto 반환 타입, getBoards 메소드 명
     //@PathVariable: URL 경로에 변수를 넣기, Long id: 담을 데이터 --> 전체 게시글 목록에서 id 값으로 각각의 게시글을 구별
-    public BoardResponseDto getBoards(@PathVariable Long id, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public ResponseEntity<BoardResponseDto> getBoards(@PathVariable Long id, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         //id 값을 담아서, boardService 로 응답을 보냄
-        return boardService.getBoard(id, userDetails.getUser());
+        return ResponseEntity.ok().body(boardService.getBoard(id, userDetails.getUser()));
     }
 
 
@@ -68,9 +68,9 @@ public class BoardController {
     //@RequestBody: HTTP Method 안의 body 값을 Mapping(key:value 로 짝지어줌), BoardRequestDto: 넘어오는 데이터를 받아주는 객체
     //@AuthenticationPrincipal: 인증 객체(Authentication)의 Principal 부분의 값을 가져온다
     //UserDetailsImpl userDetails: 인증 객체를 만들 때, Principal 부분에 userDetails 를 넣었기 때문에, userDetails 를 파라미터로 받아올 수 있었음
-    public BoardResponseDto updateBoard(@PathVariable Long id, @RequestBody BoardRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public ResponseEntity<BoardResponseDto> updateBoard(@PathVariable Long id, @RequestBody BoardRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         //데이터를 담아서, boardService 로 응답을 보냄
-        return boardService.updateBoard(id, requestDto, userDetails.getUser());
+        return ResponseEntity.ok().body(boardService.updateBoard(id, requestDto, userDetails.getUser()));
     }
 
     //선택한 게시글 삭제
@@ -79,9 +79,9 @@ public class BoardController {
     //@PathVariable: URL 경로에 변수를 넣기, Long id: 담을 데이터
     //@AuthenticationPrincipal: 인증 객체(Authentication)의 Principal 부분의 값을 가져온다
     //UserDetailsImpl userDetails: 인증 객체를 만들 때, Principal 부분에 userDetails 를 넣었기 때문에, userDetails 를 파라미터로 받아올 수 있었음
-    public MsgResponseDto deleteBoard(@PathVariable Long id, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public ResponseEntity<MsgResponseDto> deleteBoard(@PathVariable Long id, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         boardService.deleteBoard(id,userDetails.getUser());
-        return new MsgResponseDto("삭제 성공", HttpStatus.OK.value());
+        return ResponseEntity.ok().body(new MsgResponseDto("삭제 성공", HttpStatus.OK.value()));
     }
 
     @PostMapping("/board/like/{boardId}")
