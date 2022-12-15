@@ -13,7 +13,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import static com.sparta.springboards.exception.ErrorCode.*;
 
@@ -195,8 +194,7 @@ public class BoardService {
     @Transactional(readOnly = true)
     public boolean checkBoardLike(Long boardId, User user) {
         // 해당 회원의 좋아요 여부 확인
-        Optional<BoardLike> boardLike = boardLikeRepository.findByBoardIdAndUserId(boardId, user.getId());
-        return boardLike.isPresent();
+        return boardLikeRepository.existsByBoardIdAndUserId(boardId, user.getId());
     }
 
     @Transactional
