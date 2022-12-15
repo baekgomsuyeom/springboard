@@ -43,10 +43,12 @@ public class BoardController {
     //전체 게시글 목록 조회
     @GetMapping("/boards")
     //BoardResponseDto 를 List 로 반환하는 타입, getListBoards 메소드 명, () 전부 Client 에게로 반환하므로 비워둠
-    public List<BoardResponseDto> getListBoards(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public List<BoardResponseDto> getListBoards(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestParam String category) {
         //() 모든 데이터를 담아서, boardService 로 응답을 보냄
-        return boardService.getListBoards(userDetails.getUser());
+        return boardService.getListBoards(userDetails.getUser(),category);
     }
+
+
 
     //선택한 게시글 조회
     @GetMapping("/board/{id}")
@@ -56,6 +58,8 @@ public class BoardController {
         //id 값을 담아서, boardService 로 응답을 보냄
         return boardService.getBoard(id, userDetails.getUser());
     }
+
+
 
     //선택한 게시글 수정(변경)
     @PutMapping("/board/{id}")

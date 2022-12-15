@@ -17,7 +17,7 @@ public class CommentResponseDto {
     private Long id;
     private String username;
     private String comment;
-    private Integer CommentLike;
+    private int CommentLike;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
 

@@ -48,6 +48,9 @@ public class Board extends Timestamped {
     @Column(nullable = false)
     private String contents;
 
+    @Column
+    private String category;
+
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
@@ -59,12 +62,14 @@ public class Board extends Timestamped {
         this.title = requestDto.getTitle();             //this.title: (위에서 선언된) 필드, BoardRequestDto 객체의 requestDto 매개변수로 들어온 데이터를 getTitle() 에 담는다(DB 로 보내기 위해)
         this.username = user.getUsername();
         this.contents = requestDto.getContents();
+        this.category = requestDto.getCategory();
         this.user = user;          //userId -> user          //userId: 다른 값과 일치하는지를 비교해서 본인 인증을 위해 (연관관계를 짓기 위함)?
     }
 
     //선택한 게시글 수정(변경)
     public void update(BoardRequestDto boardrequestDto) {       //boardrequestDto? requestDto?
         this.title = boardrequestDto.getTitle();             //this.title: (위에서 선언된) 필드, BoardRequestDto 객체의 requestDto 매개변수로 들어온 데이터를 getTitle() 에 담는다(DB 로 보내기 위해)
+        this.category = boardrequestDto.getCategory();
         this.contents = boardrequestDto.getContents();
     }
 }

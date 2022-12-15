@@ -1,9 +1,6 @@
 package com.sparta.springboards.service;
 
-import com.sparta.springboards.dto.BoardRequestDto;
-import com.sparta.springboards.dto.BoardResponseDto;
-import com.sparta.springboards.dto.CommentResponseDto;
-import com.sparta.springboards.dto.MsgResponseDto;
+import com.sparta.springboards.dto.*;
 import com.sparta.springboards.entity.*;
 import com.sparta.springboards.exception.CustomException;
 import com.sparta.springboards.repository.BoardLikeRepository;
@@ -44,9 +41,12 @@ public class BoardService {
     //BoardResponseDto 반환 타입, createBoard 메소드 명
     //BoardRequestDto: 넘어오는 데이터를 받아주는 객체, HttpServletRequest request 객체: 누가 로그인 했는지 알기위한 토큰을 담고 있음
     public BoardResponseDto createBoard(BoardRequestDto requestDto, User user) {  //HttpServletRequest request?
-
-        Board board = boardRepository.save(new Board(requestDto, user));
-        return new BoardResponseDto(board);
+        if(requestDto.getCategory().equals("TIL") || requestDto.getCategory().equals("Spring") || requestDto.getCategory().equals("Java")){
+            Board board = boardRepository.save(new Board(requestDto, user));
+            return new BoardResponseDto(board);
+        }else{
+            throw new CustomException(NOT_EXIST_CATEGORY);
+        }
     }
 
 
@@ -54,30 +54,49 @@ public class BoardService {
     //(readOnly = true): JPA 를 사용할 경우, 변경감지 작업을 수행하지 않아 성능상의 이점
     @Transactional(readOnly = true)
     //BoardResponseDto 를 List 로 반환하는 타입, getListBoards 메소드 명, () 전부 Client 에게로 반환하므로 비워둠
-    public List<BoardResponseDto> getListBoards(User user) {
-        //boardRepository 와 연결해서, 모든 데이터들을 내림차순으로, List 타입으로 객체 Board 에 저장된 데이터들을 boardList 안에 담는다
-        List<Board> boardList =  boardRepository.findAllByOrderByModifiedAtDesc();      //주의. boards 와 board
-        //boardResponseDto 를 새롭게 만든다 --> 텅 빈 상태 (빈 주머니 상태?)
-        List<BoardResponseDto> boardResponseDto = new ArrayList<>();
+    public List<BoardResponseDto> getListBoards(User user, String category) {
 
-        //반복문을 이용하여, boardList 에 담긴 데이터들을 객체 Board 로 모두 옮긴다
-        for (Board board : boardList) {
+        if(category.equals("TIL") || category.equals("Spring") || category.equals("Java")){
 
-            List<CommentResponseDto> commentList = new ArrayList<>();
-            for (Comment comment : board.getComments()) {
+            List<Board> boardList =boardRepository.findAllByCategoryOrderByCreatedAtDesc(category);
+            List<BoardResponseDto> boardResponseDto = new ArrayList<>();
 
-                commentList.add(new CommentResponseDto(comment, commentLikeRepository.countAllByComment_Id(comment.getId())));
+            for (Board board : boardList) {
+                List<CommentResponseDto> commentList = new ArrayList<>();
+                for (Comment comment : board.getComments()) {
+                    commentList.add(new CommentResponseDto(comment, commentLikeRepository.countAllByCommentId(comment.getId())));
+                }
+                boardResponseDto.add(new BoardResponseDto(
+                        board,
+                        commentList,
+                        (checkBoardLike(board.getId(), user))));
             }
+            return boardResponseDto;
+        } else {
+            //boardRepository 와 연결해서, 모든 데이터들을 내림차순으로, List 타입으로 객체 Board 에 저장된 데이터들을 boardList 안에 담는다
+            List<Board> boardList =  boardRepository.findAllByOrderByCreatedAtDesc();      //주의. boards 와 board
+            //boardResponseDto 를 새롭게 만든다 --> 텅 빈 상태 (빈 주머니 상태?)
+            List<BoardResponseDto> boardResponseDto = new ArrayList<>();
 
-            //board 를 새롭게 BoardResponseDto 로 옮겨담고, BoardResponseDto 를 boardResponseDto 안에 추가(add)한다
-            boardResponseDto.add(new BoardResponseDto(
-                    board,
-                    commentList,
-                    // 해당 회원의 해당 게시글 좋아요 여부
-                    (checkBoardLike(board.getId(), user))));
+            //반복문을 이용하여, boardList 에 담긴 데이터들을 객체 Board 로 모두 옮긴다
+            for (Board board : boardList) {
+
+                List<CommentResponseDto> commentList = new ArrayList<>();
+                for (Comment comment : board.getComments()) {
+
+                    commentList.add(new CommentResponseDto(comment, commentLikeRepository.countAllByCommentId(comment.getId())));
+                }
+
+                //board 를 새롭게 BoardResponseDto 로 옮겨담고, BoardResponseDto 를 boardResponseDto 안에 추가(add)한다
+                boardResponseDto.add(new BoardResponseDto(
+                        board,
+                        commentList,
+                        // 해당 회원의 해당 게시글 좋아요 여부
+                        (checkBoardLike(board.getId(), user))));
+            }
+            //최종적으로 옮겨담아진 boardResponseDto 를 반환
+            return boardResponseDto;
         }
-        //최종적으로 옮겨담아진 boardResponseDto 를 반환
-        return boardResponseDto;
     }
 
     //선택한 게시글 조회
@@ -92,7 +111,7 @@ public class BoardService {
 
         List<CommentResponseDto> commentList = new ArrayList<>();
         for (Comment comment : board.getComments()) {
-            commentList.add(new CommentResponseDto(comment,commentLikeRepository.countAllByComment_Id(comment.getId())));
+            commentList.add(new CommentResponseDto(comment,commentLikeRepository.countAllByCommentId(comment.getId())));
         }
 
         //데이터가 들어간 객체 board 를 BoardResponseDto 로 반환
@@ -117,7 +136,6 @@ public class BoardService {
                     () -> new CustomException(NOT_FOUND_BOARD)
                     //() -> new RequestException(ErrorCoded .게시글이_존재하지_않습니다_400)
             );
-
         } else {
             //user 의 권한이 ADMIN 이 아니라면, 아이디가 같은 유저만 수정 가능
             board = boardRepository.findByIdAndUserId(id, user.getId()).orElseThrow(
@@ -129,15 +147,20 @@ public class BoardService {
 
         List<CommentResponseDto> commentList = new ArrayList<>();
         for (Comment comment : board.getComments()) {
-            commentList.add(new CommentResponseDto(comment, commentLikeRepository.countAllByComment_Id(comment.getId())));
+            commentList.add(new CommentResponseDto(comment, commentLikeRepository.countAllByCommentId(comment.getId())));
         }
 
+        if(requestDto.getCategory().equals("TIL") || requestDto.getCategory().equals("Spring") || requestDto.getCategory().equals("Java")){
+            return new BoardResponseDto(
+                    board,
+                    commentList,
+                    // 해당 회원의 해당 게시글 좋아요 여부
+                    (checkBoardLike(board.getId(), user)));
+        }else{
+            throw new CustomException(NOT_EXIST_CATEGORY);
+        }
         //데이터가 들어간 객체 board 를 BoardResponseDto 로 반환
-        return new BoardResponseDto(
-                board,
-                commentList,
-                // 해당 회원의 해당 게시글 좋아요 여부
-                (checkBoardLike(board.getId(), user)));
+
 
     }
 
