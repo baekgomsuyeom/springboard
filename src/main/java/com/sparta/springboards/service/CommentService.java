@@ -57,7 +57,7 @@ public class CommentService {
         } else {
             //user 의 권한이 ADMIN 이 아니라면, 아이디가 같은 유저만 수정 가능
             comment = commentRepository.findByIdAndUserId(cmtId, user.getId()).orElseThrow(
-                    () -> new CustomException(NOT_FOUND_COMMENT)
+                    () -> new CustomException(AUTHORIZATION)
             );
         }
 
@@ -80,7 +80,7 @@ public class CommentService {
         } else {
             //user 의 권한이 ADMIN 이 아니라면, 아이디가 같은 유저만 수정 가능
             comment = commentRepository.findByIdAndUserId(cmtId, user.getId()).orElseThrow(
-                    () -> new CustomException(NOT_FOUND_COMMENT)
+                    () -> new CustomException(AUTHORIZATION)
             );
         }
         //해당 댓글 삭제
