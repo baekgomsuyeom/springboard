@@ -6,6 +6,7 @@ import com.sparta.springboards.exception.CustomException;
 import com.sparta.springboards.repository.BoardLikeRepository;
 import com.sparta.springboards.repository.BoardRepository;
 import com.sparta.springboards.repository.CommentLikeRepository;
+import com.sparta.springboards.repository.CommentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -28,6 +29,7 @@ public class BoardService {
     private final BoardRepository boardRepository;
     private final BoardLikeRepository boardLikeRepository;
     private final CommentLikeRepository commentLikeRepository;
+    private final CommentRepository commentRepository;
     //private final UserRepository userRepository;
     //private final JwtUtil jwtUtil;
 
@@ -110,10 +112,19 @@ public class BoardService {
         );
 
         List<CommentResponseDto> commentList = new ArrayList<>();
-        for (Comment comment : board.getComments()) {
-            commentList.add(new CommentResponseDto(comment,commentLikeRepository.countAllByCommentId(comment.getId())));
-        }
+        List<CommentResponseDto> childCommentList = new ArrayList<>();
 
+        for (Comment comment : board.getComments()) {
+            if(comment.getParent()==null) {
+                for(Comment comment1 : comment.getChildren()){
+                  if(id == comment1.getBoard().getId()) {
+                      childCommentList.add(new CommentResponseDto(comment1, commentLikeRepository.countAllByCommentId(comment1.getBoard().getId())));
+                  }
+                }
+                commentList.add(new CommentResponseDto(comment, commentLikeRepository.countAllByCommentId(comment.getId()),childCommentList));
+            }
+            childCommentList = new ArrayList<>();
+        }
         //데이터가 들어간 객체 board 를 BoardResponseDto 로 반환
         return new BoardResponseDto(
                 board,

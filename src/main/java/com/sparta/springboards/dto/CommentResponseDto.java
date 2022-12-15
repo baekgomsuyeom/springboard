@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @AllArgsConstructor
@@ -18,15 +20,32 @@ public class CommentResponseDto {
     private String username;
     private String comment;
     private int CommentLike;
+
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
 
-    public CommentResponseDto (Comment comment, int cnt) {
+    private List<CommentResponseDto
+            > childComment = new ArrayList<>();
+
+    public CommentResponseDto(Comment comment, int cnt) {
         this.id = comment.getId();
         this.username = comment.getUsername();
         this.comment = comment.getComment();
         this.CommentLike = cnt;
         this.createdAt = comment.getCreatedAt();
         this.modifiedAt = comment.getModifiedAt();
+
     }
+
+    public CommentResponseDto(Comment comment, int cnt, List<CommentResponseDto> childcomment) {
+        this.id = comment.getId();
+        this.username = comment.getUsername();
+        this.comment = comment.getComment();
+        this.CommentLike = cnt;
+        this.createdAt = comment.getCreatedAt();
+        this.modifiedAt = comment.getModifiedAt();
+        this.childComment = childcomment;
+    }
+
+
 }

@@ -20,9 +20,9 @@ public class CommentController {
     private final CommentService commentService;
 
     //댓글 작성
-    @PostMapping("/{id}")
-    public ResponseEntity<CommentResponseDto> createComment(@PathVariable Long id, @RequestBody CommentRequestDto commentRequestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return ResponseEntity.ok().body(commentService.createComment(id, commentRequestDto, userDetails.getUser()));
+    @PostMapping("/{boardId}/{commentId}")
+    public ResponseEntity<CommentResponseDto> createComment(@PathVariable Long boardId,@PathVariable Long commentId,@RequestBody CommentRequestDto commentRequestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return ResponseEntity.ok().body(commentService.createComment(boardId,commentId, commentRequestDto, userDetails.getUser()));
     }
 
     //댓글 수정(변경)

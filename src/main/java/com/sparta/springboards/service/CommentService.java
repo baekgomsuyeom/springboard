@@ -29,12 +29,22 @@ public class CommentService {
     private final CommentLikeRepository commentLikeRepository;
 
     @Transactional
-    public CommentResponseDto createComment(Long id, CommentRequestDto commentRequestDto, User user) {
+    public CommentResponseDto createComment(Long id, Long commentId, CommentRequestDto commentRequestDto, User user) {
         Board board = boardRepository.findById(id).orElseThrow(
                 () -> new CustomException(NOT_FOUND_BOARD)
         );
-
-        Comment comment = commentRepository.save(new Comment(commentRequestDto, board, user));
+        Comment comment;
+        if(commentId == 0){
+            comment = commentRepository.save(new Comment(commentRequestDto, board, user));
+        }else{
+            Comment childComment = commentRepository.findById(commentId).orElseThrow(
+                    () -> new CustomException(NOT_FOUND_COMMENT)
+            );
+            if(commentRepository.findAllByIdAndBoardId(commentId,board.getId()).isEmpty()){
+                throw new CustomException(NOT_FOUND_COMMENT);
+            }
+            comment = commentRepository.save(new Comment(commentRequestDto, board, user, childComment));
+        }
         int cnt = 0;
         return new CommentResponseDto(comment,cnt);
     }
