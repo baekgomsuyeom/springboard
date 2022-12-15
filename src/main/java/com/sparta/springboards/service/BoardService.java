@@ -139,7 +139,7 @@ public class BoardService {
         } else {
             //user 의 권한이 ADMIN 이 아니라면, 아이디가 같은 유저만 수정 가능
             board = boardRepository.findByIdAndUserId(id, user.getId()).orElseThrow(
-                    () -> new CustomException(NOT_FOUND_USER)
+                    () -> new CustomException(AUTHORIZATION)
             );
         }
 
@@ -182,7 +182,7 @@ public class BoardService {
         } else {
             //user 의 권한이 ADMIN 이 아니라면, 아이디가 같은 유저만 수정 가능
             board = boardRepository.findByIdAndUserId(id, user.getId()).orElseThrow(
-                    () -> new CustomException(NOT_FOUND_USER)
+                    () -> new CustomException(AUTHORIZATION)
             );
         }
 
