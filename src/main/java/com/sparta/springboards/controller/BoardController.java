@@ -43,9 +43,14 @@ public class BoardController {
     //전체 게시글 목록 조회
     @GetMapping("/boards")
     //BoardResponseDto 를 List 로 반환하는 타입, getListBoards 메소드 명, () 전부 Client 에게로 반환하므로 비워둠
-    public List<BoardResponseDto> getListBoards(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestParam String category) {
+    public List<BoardResponseDto> getListBoards(@AuthenticationPrincipal UserDetailsImpl userDetails) {
         //() 모든 데이터를 담아서, boardService 로 응답을 보냄
-        return boardService.getListBoards(userDetails.getUser(),category);
+        return boardService.getListBoards(userDetails.getUser());
+    }
+
+    @GetMapping("/boards/{category}")
+    public List<BoardResponseDto> getCategoryListBoards(@AuthenticationPrincipal UserDetailsImpl userDetails, @PathVariable String category){
+        return boardService.getCategoryListBoards(userDetails.getUser(),category);
     }
 
 

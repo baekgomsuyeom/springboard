@@ -42,13 +42,12 @@ public class BoardService {
     @Transactional   //업데이트를 할 때, DB에 반영이 되는 것을 스프링에게 알려줌??
     //BoardResponseDto 반환 타입, createBoard 메소드 명
     //BoardRequestDto: 넘어오는 데이터를 받아주는 객체, HttpServletRequest request 객체: 누가 로그인 했는지 알기위한 토큰을 담고 있음
-    public BoardResponseDto createBoard(BoardRequestDto requestDto, User user) {  //HttpServletRequest request?
-        if(requestDto.getCategory().equals("TIL") || requestDto.getCategory().equals("Spring") || requestDto.getCategory().equals("Java")){
-            Board board = boardRepository.save(new Board(requestDto, user));
-            return new BoardResponseDto(board);
-        }else{
+    public BoardResponseDto createBoard(BoardRequestDto requestDto, User user) {
+        if (Category.valueOfCategory(requestDto.getCategory()) == null) {
             throw new CustomException(NOT_EXIST_CATEGORY);
         }
+        Board board = boardRepository.save(new Board(requestDto, user));
+        return new BoardResponseDto(board);
     }
 
 
@@ -56,49 +55,62 @@ public class BoardService {
     //(readOnly = true): JPA 를 사용할 경우, 변경감지 작업을 수행하지 않아 성능상의 이점
     @Transactional(readOnly = true)
     //BoardResponseDto 를 List 로 반환하는 타입, getListBoards 메소드 명, () 전부 Client 에게로 반환하므로 비워둠
-    public List<BoardResponseDto> getListBoards(User user, String category) {
+    public List<BoardResponseDto> getListBoards(User user) {
+        //boardRepository 와 연결해서, 모든 데이터들을 내림차순으로, List 타입으로 객체 Board 에 저장된 데이터들을 boardList 안에 담는다
+        List<Board> boardList = boardRepository.findAllByOrderByCreatedAtDesc();      //주의. boards 와 board
+        //boardResponseDto 를 새롭게 만든다 --> 텅 빈 상태 (빈 주머니 상태?)
+        List<BoardResponseDto> boardResponseDto = new ArrayList<>();
 
-        if(category.equals("TIL") || category.equals("Spring") || category.equals("Java")){
-
-            List<Board> boardList =boardRepository.findAllByCategoryOrderByCreatedAtDesc(category);
-            List<BoardResponseDto> boardResponseDto = new ArrayList<>();
-
-            for (Board board : boardList) {
-                List<CommentResponseDto> commentList = new ArrayList<>();
+        //반복문을 이용하여, boardList 에 담긴 데이터들을 객체 Board 로 모두 옮긴다
+        for (Board board : boardList) {
+            List<CommentResponseDto> commentList = new ArrayList<>();
                 for (Comment comment : board.getComments()) {
-                    commentList.add(new CommentResponseDto(comment, commentLikeRepository.countAllByCommentId(comment.getId())));
+                    List<CommentResponseDto> childCommentList = new ArrayList<>();                  // 새로운 부모 댓글 마다 자식 댓글 리스트 새로 만들기
+                    if(comment.getParent()==null) {                                                 // 댓글이 부모 댓글일 때만 실행
+                        for(Comment Childcomment: comment.getChildren()){                           // 자식 댓글들 목록 저장
+                            childCommentList.add(new CommentResponseDto(Childcomment, commentLikeRepository.countAllByCommentId(Childcomment.getBoard().getId()))); // 자식 댓글 리스트에 저장
+                        }
+                        commentList.add(new CommentResponseDto(comment, commentLikeRepository.countAllByCommentId(comment.getId()),childCommentList)); //댓글 리스트에 부모 댓글과 자식 댓글리스트 저장
+                    }
                 }
-                boardResponseDto.add(new BoardResponseDto(
-                        board,
-                        commentList,
-                        (checkBoardLike(board.getId(), user))));
-            }
-            return boardResponseDto;
-        } else {
-            //boardRepository 와 연결해서, 모든 데이터들을 내림차순으로, List 타입으로 객체 Board 에 저장된 데이터들을 boardList 안에 담는다
-            List<Board> boardList =  boardRepository.findAllByOrderByCreatedAtDesc();      //주의. boards 와 board
-            //boardResponseDto 를 새롭게 만든다 --> 텅 빈 상태 (빈 주머니 상태?)
-            List<BoardResponseDto> boardResponseDto = new ArrayList<>();
-
-            //반복문을 이용하여, boardList 에 담긴 데이터들을 객체 Board 로 모두 옮긴다
-            for (Board board : boardList) {
-
-                List<CommentResponseDto> commentList = new ArrayList<>();
-                for (Comment comment : board.getComments()) {
-
-                    commentList.add(new CommentResponseDto(comment, commentLikeRepository.countAllByCommentId(comment.getId())));
-                }
-
-                //board 를 새롭게 BoardResponseDto 로 옮겨담고, BoardResponseDto 를 boardResponseDto 안에 추가(add)한다
-                boardResponseDto.add(new BoardResponseDto(
-                        board,
-                        commentList,
-                        // 해당 회원의 해당 게시글 좋아요 여부
-                        (checkBoardLike(board.getId(), user))));
-            }
-            //최종적으로 옮겨담아진 boardResponseDto 를 반환
-            return boardResponseDto;
+            //board 를 새롭게 BoardResponseDto 로 옮겨담고, BoardResponseDto 를 boardResponseDto 안에 추가(add)한다
+            boardResponseDto.add(new BoardResponseDto(
+                    board,
+                    commentList,
+                    // 해당 회원의 해당 게시글 좋아요 여부
+                    (checkBoardLike(board.getId(), user))));
         }
+        //최종적으로 옮겨담아진 boardResponseDto 를 반환
+        return boardResponseDto;
+    }
+    @Transactional(readOnly = true)
+    public List<BoardResponseDto> getCategoryListBoards(User user, String category) {
+
+        if (Category.valueOfCategory(category) == null) {
+            throw new CustomException(NOT_EXIST_CATEGORY);
+        }
+        List<Board> boardList = boardRepository.findAllByCategoryOrderByCreatedAtDesc(category);
+
+        List<BoardResponseDto> boardResponseDto = new ArrayList<>();
+
+        for (Board board : boardList) {
+            List<CommentResponseDto> commentList = new ArrayList<>();
+            for (Comment comment : board.getComments()) {
+                List<CommentResponseDto> childCommentList = new ArrayList<>();                  // 새로운 부모 댓글 마다 자식 댓글 리스트 새로 만들기
+                if(comment.getParent()==null) {                                                 // 댓글이 부모 댓글일 때만 실행
+                    for(Comment Childcomment: comment.getChildren()){                           // 자식 댓글들 목록 저장
+                            childCommentList.add(new CommentResponseDto(Childcomment, commentLikeRepository.countAllByCommentId(Childcomment.getBoard().getId()))); // 자식 댓글 리스트에 저장
+                    }
+                    commentList.add(new CommentResponseDto(comment, commentLikeRepository.countAllByCommentId(comment.getId()),childCommentList)); //댓글 리스트에 부모 댓글과 자식 댓글리스트 저장
+                }
+            }
+
+            boardResponseDto.add(new BoardResponseDto(
+                    board,
+                    commentList,
+                    (checkBoardLike(board.getId(), user))));
+        }
+        return boardResponseDto;
     }
 
     //선택한 게시글 조회
@@ -112,18 +124,17 @@ public class BoardService {
         );
 
         List<CommentResponseDto> commentList = new ArrayList<>();
-        List<CommentResponseDto> childCommentList = new ArrayList<>();
 
         for (Comment comment : board.getComments()) {
-            if(comment.getParent()==null) {
-                for(Comment comment1 : comment.getChildren()){
-                  if(id == comment1.getBoard().getId()) {
-                      childCommentList.add(new CommentResponseDto(comment1, commentLikeRepository.countAllByCommentId(comment1.getBoard().getId())));
+            List<CommentResponseDto> childCommentList = new ArrayList<>();                  // 새로운 부모 댓글 마다 자식 댓글 리스트 새로 만들기
+            if(comment.getParent()==null) {                                                 // 댓글이 부모 댓글일 때만 실행
+                for(Comment Childcomment: comment.getChildren()){                           // 자식 댓글들 목록 저장
+                  if(id.equals(Childcomment.getBoard().getId())) {
+                      childCommentList.add(new CommentResponseDto(Childcomment, commentLikeRepository.countAllByCommentId(Childcomment.getBoard().getId()))); // 자식 댓글 리스트에 저장
                   }
                 }
-                commentList.add(new CommentResponseDto(comment, commentLikeRepository.countAllByCommentId(comment.getId()),childCommentList));
+                commentList.add(new CommentResponseDto(comment, commentLikeRepository.countAllByCommentId(comment.getId()),childCommentList)); //댓글 리스트에 부모 댓글과 자식 댓글리스트 저장
             }
-            childCommentList = new ArrayList<>();
         }
         //데이터가 들어간 객체 board 를 BoardResponseDto 로 반환
         return new BoardResponseDto(

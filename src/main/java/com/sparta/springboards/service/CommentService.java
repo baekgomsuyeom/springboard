@@ -45,8 +45,7 @@ public class CommentService {
             }
             comment = commentRepository.save(new Comment(commentRequestDto, board, user, childComment));
         }
-        int cnt = 0;
-        return new CommentResponseDto(comment,cnt);
+        return new CommentResponseDto(comment,0);
     }
 
     @Transactional
